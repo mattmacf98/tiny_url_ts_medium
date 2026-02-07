@@ -1,9 +1,26 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tiny_url
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U username -d tiny_url" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
   app:
     image: tiny_url_ts:latest
     env_file:
       - .env
     stdin_open: true
     tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
