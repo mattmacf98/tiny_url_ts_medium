@@ -2,13 +2,14 @@ import express from "express";
 import process from "node:process";
 import crypto from "node:crypto";
 import { Database } from "./db";
+import { Cache } from "./cache";
 
 const app = express();
 const port = process.env.PORT ?? 8080;
 const baseUrl = process.env.BASE_URL ?? `http://localhost:${port}`;
 
 let db: Database;
-
+let cache: Cache;
 app.use(express.json());
 
 function getShortCodeFromUrl(url: string): string {
@@ -42,7 +43,15 @@ app.post("/shorten", async (req, res) => {
 
 app.get("/short/:shortCode", async (req, res) => {
   const { shortCode } = req.params;
-  const originalUrl = await db.getShortUrlByShortId(shortCode);
+  let originalUrl = await cache.get(shortCode);
+  if (!originalUrl) {
+    // If the URL is not in the cache, get it from the database
+    originalUrl = await db.getShortUrlByShortId(shortCode);
+    if (originalUrl) {
+      // If the URL is found in the database, cache it
+      await cache.set(shortCode, originalUrl);
+    }
+  }
 
   if (!originalUrl) {
     return res.status(404).send("Not Found");
@@ -54,11 +63,16 @@ app.get("/short/:shortCode", async (req, res) => {
 });
 
 async function start() {
-  const dsn = process.env.POSTGRES_DSN;
-  if (!dsn) {
+  const postgresDsn = process.env.POSTGRES_DSN;
+  if (!postgresDsn) {
     throw new Error("POSTGRES_DSN environment variable is required");
   }
-  db = await Database.Connect(dsn);
+  const redisAddr = process.env.REDIS_DSN;
+  if (!redisAddr) {
+    throw new Error("REDIS_DSN environment variable is required");
+  }
+  db = await Database.Connect(postgresDsn);
+  cache = await Cache.connect(redisAddr);
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
