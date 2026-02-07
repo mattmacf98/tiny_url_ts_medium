@@ -8,6 +8,12 @@ build:
 
 .PHONY: run
 run:
+	docker compose -f docker-compose.yml down
+	docker build --target harness -t tiny_url_ts .
+	docker compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+
+.PHONY: run-local
+run-local:
 	docker compose down
-	docker build -t tiny_url_ts .
+	docker compose build
 	docker compose up --abort-on-container-exit --exit-code-from app

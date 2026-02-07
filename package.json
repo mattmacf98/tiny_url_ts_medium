@@ -2,11 +2,11 @@
   "name": "tiny_url_ts",
   "version": "1.0.0",
   "description": "starter template for javascript",
-  "main": "dist/main.js",
-  "bin": "dist/main.js",
+  "main": "bin/main.js",
+  "bin": "bin/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/main.js",
+    "start": "node bin/main.js",
     "dev": "ts-node src/main.ts"
   },
   "dependencies": {
