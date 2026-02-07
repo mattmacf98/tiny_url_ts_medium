@@ -9,5 +9,5 @@ build:
 .PHONY: run
 run:
 	docker compose down
-	docker build -t <YOUR_IMAGE_NAME_HERE> .
+	docker build -t tiny_url_ts .
 	docker compose up --abort-on-container-exit --exit-code-from app

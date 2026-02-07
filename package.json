@@ -1,5 +1,5 @@
 {
-  "name": "<YOUR_IMAGE_NAME_HERE>",
+  "name": "tiny_url_ts",
   "version": "1.0.0",
   "description": "starter template for javascript",
   "main": "dist/main.js",
@@ -9,10 +9,13 @@
     "start": "node dist/main.js",
     "dev": "ts-node src/main.ts"
   },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
   "devDependencies": {
     "typescript": "^5.3.3",
     "@types/node": "^20.10.6",
+    "@types/express": "^4.17.21",
     "ts-node": "^10.9.2"
   }
 }
-

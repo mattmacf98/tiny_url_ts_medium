@@ -1,4 +1,4 @@
-FROM <TEST_HARNESS_IMAGE_HERE>:latest
+FROM mattmacf98/tiny_url_harness:latest
 
 # Install Node.js and npm
 RUN apt-get update && apt-get install -y nodejs npm

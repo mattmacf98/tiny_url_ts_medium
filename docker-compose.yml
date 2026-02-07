@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: <YOUR_IMAGE_NAME_HERE>:latest
+    image: tiny_url_ts:latest
     env_file:
       - .env
     stdin_open: true
