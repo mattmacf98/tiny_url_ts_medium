@@ -40,6 +40,17 @@ app.post("/shorten", (req, res) => {
   return res.status(201).json({ short_url: shortUrl });
 });
 
+app.get("/short/:shortCode", (req, res) => {
+    const { shortCode } = req.params;
+    const originalUrl = urlStore.get(shortCode);
+  
+    if (!originalUrl) {
+      return res.status(404).send("Not Found");
+    }
+  
+    return res.redirect(302, originalUrl);
+  });
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
