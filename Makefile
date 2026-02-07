@@ -14,6 +14,6 @@ run:
 
 .PHONY: run-local
 run-local:
-	docker compose down
-	docker compose build
-	docker compose up --abort-on-container-exit --exit-code-from app
+	docker compose -f docker-compose.yml -f docker-compose.local.yml down
+	docker compose -f docker-compose.yml -f docker-compose.local.yml build
+	docker compose -f docker-compose.yml -f docker-compose.local.yml up --abort-on-container-exit --exit-code-from app
