@@ -48,6 +48,8 @@ app.get("/short/:shortCode", async (req, res) => {
     return res.status(404).send("Not Found");
   }
 
+  await db.incrementShortIdAccesses(shortCode);
+
   return res.redirect(302, originalUrl);
 });
 

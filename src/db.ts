@@ -21,6 +21,11 @@ export class Database {
                 'INSERT INTO short_urls (short_id, url) VALUES ($1, $2)',
                 [shortId, originalUrl]
             );
+
+            await this.db.query(
+                `INSERT INTO short_url_stats (short_id, count) VALUES ($1, $2)`,
+                [shortId, 0]
+            )
         } catch (err) {
             if (err instanceof Error && err.message.includes('duplicate key value violates unique constraint')) {
                 // Ignore duplicate inserts gracefully
@@ -47,6 +52,21 @@ export class Database {
         }
     }
 
+    public async incrementShortIdAccesses(shortId: string) {
+        const result = await this.db.query(
+            'SELECT count FROM short_url_stats WHERE short_id=$1',
+            [shortId]
+        );
+        if (result.rows.length == 0) return;
+
+        const currentCount = result.rows[0].count as number;
+
+        await this.db.query(
+            'UPDATE short_url_stats SET count=$1 WHERE short_id=$2',
+            [currentCount + 1, shortId]
+        )
+    }
+
     public async destroy() {
         await this.db.end();
     }
@@ -59,6 +79,14 @@ export class Database {
             )
         `
         this.db.query(createShortUrlsQuery);
+
+        const createShortUrlStatsQuery = `
+           CREATE TABLE IF NOT EXISTS short_url_stats (
+                short_id VARCHAR PRIMARY KEY,
+                count INTEGER NOT NULL DEFAULT 0
+            );
+        `
+        this.db.query(createShortUrlStatsQuery);
     }
 
 }
